@@ -1,6 +1,4 @@
 abstract class Validators {
-  static const int minMatrixNumber = 2;
-  static const int maxMatrixNumber = 20;
   static const int mobileNumberLength = 10;
 
   static String? username(String value) {
@@ -22,11 +20,11 @@ abstract class Validators {
   static String? matrixNumber(String value) {
     final trimmed = value.trim();
     if (trimmed.isEmpty) return 'Enter a matrix number';
+    // No range restriction by request — any positive whole number is
+    // accepted as a grid size; only reject what can't build a grid at all.
     final parsed = int.tryParse(trimmed);
-    if (parsed == null ||
-        parsed < minMatrixNumber ||
-        parsed > maxMatrixNumber) {
-      return 'Enter a number between $minMatrixNumber and $maxMatrixNumber';
+    if (parsed == null || parsed <= 0) {
+      return 'Enter a valid number';
     }
     return null;
   }
