@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:matrix_application/core/utils/color_band.dart';
 
-/// Fixed 7-color VIBGYOR bands used to paint matrix grid cells.
+/// Fixed VIBGYOR bands (plus a Pink overflow band past 35) used to paint
+/// matrix grid cells.
 ///
 /// These are deliberately NOT derived from [ColorScheme] — the grid must stay
-/// recognizably Violet-to-Red in both light and dark mode regardless of the
-/// app's dynamic theme, only the surrounding chrome adapts.
+/// recognizably Violet-to-Red (then Pink) in both light and dark mode
+/// regardless of the app's dynamic theme, only the surrounding chrome adapts.
+/// Every band uses a deep/saturated shade (not a pastel) so boxes read as
+/// bold, "hard" colors against the app's white background.
 class VibgyorBand {
   const VibgyorBand({
     required this.name,
@@ -27,46 +30,52 @@ abstract class VibgyorPalette {
   static const List<VibgyorBand> bands = [
     VibgyorBand(
       name: 'Violet',
-      light: Color(0xFF7C4DFF),
-      dark: Color(0xFF9575CD),
+      light: Color(0xFF6A1B9A),
+      dark: Color(0xFF8E24AA),
       onColor: Colors.white,
     ),
     VibgyorBand(
       name: 'Indigo',
-      light: Color(0xFF536DFE),
-      dark: Color(0xFF7986CB),
+      light: Color(0xFF283593),
+      dark: Color(0xFF3949AB),
       onColor: Colors.white,
     ),
     VibgyorBand(
       name: 'Blue',
-      light: Color(0xFF2979FF),
-      dark: Color(0xFF64B5F6),
+      light: Color(0xFF1565C0),
+      dark: Color(0xFF1E88E5),
       onColor: Colors.white,
     ),
     VibgyorBand(
       name: 'Green',
-      light: Color(0xFF00C853),
-      dark: Color(0xFF66BB6A),
-      onColor: Colors.black87,
+      light: Color(0xFF2E7D32),
+      dark: Color(0xFF388E3C),
+      onColor: Colors.white,
     ),
     VibgyorBand(
       name: 'Yellow',
-      light: Color(0xFFFFD600),
-      dark: Color(0xFFFFD54F),
+      light: Color(0xFFF9A825),
+      dark: Color(0xFFFBC02D),
       onColor: Colors.black87,
     ),
     VibgyorBand(
       name: 'Orange',
-      light: Color(0xFFFF6D00),
-      dark: Color(0xFFFFB74D),
-      onColor: Colors.black87,
+      light: Color(0xFFE65100),
+      dark: Color(0xFFEF6C00),
+      onColor: Colors.white,
     ),
     VibgyorBand(
       name: 'Red',
-      light: Color(0xFFFF1744),
-      // Kept vivid (not the usual muted dark-mode pastel) since every box
-      // past 35 clamps here — it must stay unmistakably "hard red".
-      dark: Color(0xFFFF5252),
+      light: Color(0xFFB71C1C),
+      dark: Color(0xFFE53935),
+      onColor: Colors.white,
+    ),
+    VibgyorBand(
+      name: 'Pink',
+      // Every box past 35 lands here (ColorBand.overflowIndex) — a distinct
+      // color from Red, not a continuation of it.
+      light: Color(0xFFC2185B),
+      dark: Color(0xFFEC407A),
       onColor: Colors.white,
     ),
   ];

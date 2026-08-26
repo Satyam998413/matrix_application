@@ -58,10 +58,9 @@ class LoginForm extends StatelessWidget {
           errorText: form.matrixNumberError,
           helperText: form.infoMessage ?? 'Grid size, from 2 to 20',
           onChanged: onMatrixNumberChanged,
-          inputFormatters: [
-            FilteringTextInputFormatter.digitsOnly,
-            LengthLimitingTextInputFormatter(2),
-          ],
+          // No length cap — the user can type any number of digits; the
+          // 2-20 range is still enforced as a validation error on submit.
+          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
         ),
       ],
     );

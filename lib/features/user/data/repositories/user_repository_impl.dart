@@ -46,8 +46,11 @@ class UserRepositoryImpl implements UserRepository {
   @override
   Future<Result<List<User>>> getAllUsers() async {
     try {
-      final models = _localDataSource.getAll();
-      return Success(models.map((m) => m.toEntity()).toList());
+      final users = _localDataSource.getAll().map((m) => m.toEntity()).toList()
+        // Most-recently-registered user first — Hive returns insertion
+        // order, which isn't what a "history" list should read as.
+        ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+      return Success(users);
     } catch (_) {
       return const ResultError(CacheFailure());
     }

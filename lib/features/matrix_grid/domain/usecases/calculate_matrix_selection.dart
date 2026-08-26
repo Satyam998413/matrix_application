@@ -3,18 +3,19 @@ import 'package:matrix_application/core/utils/color_band.dart';
 import 'package:matrix_application/features/matrix_grid/domain/entities/cell_coordinate.dart';
 import 'package:matrix_application/features/matrix_grid/domain/entities/matrix_tap_result.dart';
 
-/// Pure algorithm — no Flutter/Hive import — implementing the three rules
+/// Pure algorithm — no Flutter/Hive import — implementing the rules
 /// confirmed with the user:
 ///  1. Corner-anchored rectangle: a tap at (row, col) always selects (1,1)..(row,col).
-///  2. Additive union, first-selection-wins: a cell already colored by an
-///     earlier tap keeps its color; only still-blank cells get newly colored.
-///  3. VIBGYOR clamp: the color-sequence counter only advances for newly
-///     colored cells, and bands clamp at the last color past 35 (no cycling).
-///
-/// The live number-label overlay is a separate concern from persisted color:
-/// every cell in the tapped rectangle gets a label (even if already colored),
-/// so a smaller selection nested entirely inside an earlier larger one still
-/// visibly shows its own position numbers with no effect on color.
+///  2. Every cell INSIDE that rectangle is (re)colored fresh on every tap —
+///     a later tap overwrites colors an earlier tap already set, each time.
+///     Cells OUTSIDE the current rectangle are left untouched, so a bigger
+///     earlier selection's colors stay "saved" wherever a smaller later tap
+///     doesn't reach.
+///  3. VIBGYOR by box number: a cell's band comes directly from its position
+///     (1..rows*cols) within the CURRENT rectangle — box 1-5 is Violet, 6-10
+///     Indigo, etc. — clamping at the last band past 35 (no cycling). Color
+///     and the live label are the same number, deliberately: "box number" is
+///     a single concept, not two separate counters.
 @injectable
 class CalculateMatrixSelection {
   MatrixTapResult call({
@@ -24,7 +25,6 @@ class CalculateMatrixSelection {
   }) {
     final currentSelectionLabels = <String, int>{};
     final updatedColors = Map<String, int>.from(committedColors);
-    var colorSeq = 0;
     var position = 0;
 
     for (var r = 1; r <= row; r++) {
@@ -32,11 +32,7 @@ class CalculateMatrixSelection {
         position++;
         final key = CellCoordinate(r, c).toKey();
         currentSelectionLabels[key] = position;
-
-        if (!updatedColors.containsKey(key)) {
-          colorSeq++;
-          updatedColors[key] = ColorBand.indexForSequence(colorSeq);
-        }
+        updatedColors[key] = ColorBand.indexForSequence(position);
       }
     }
 

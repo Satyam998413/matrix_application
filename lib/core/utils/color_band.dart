@@ -3,12 +3,15 @@
 /// [VibgyorPalette] color lookup.
 abstract class ColorBand {
   static const int boxesPerBand = 5;
-  static const int totalBands = 7;
+  static const int vibgyorBands = 7;
 
-  /// Boxes past the last band clamp at the final band (no cycling) — matches
-  /// the user's "35> all boxes color till [red]" requirement.
+  /// Index of the overflow band (Pink) — every box past 35 lands here.
+  static const int overflowIndex = vibgyorBands;
+
+  /// Boxes 1-35 map to the 7 VIBGYOR bands (5 each); anything past 35 is the
+  /// distinct Pink overflow band, not a continuation of Red.
   static int indexForSequence(int oneBasedSequence) {
-    final index = (oneBasedSequence - 1) ~/ boxesPerBand;
-    return index > totalBands - 1 ? totalBands - 1 : index;
+    if (oneBasedSequence > boxesPerBand * vibgyorBands) return overflowIndex;
+    return (oneBasedSequence - 1) ~/ boxesPerBand;
   }
 }
