@@ -32,8 +32,14 @@ class HomeScreen extends StatelessWidget {
 class _HomeView extends StatelessWidget {
   const _HomeView();
 
-  Future<void> _onSubmitPressed(BuildContext context) async {
-    final confirmed = await SubmitConfirmationDialog.show(context);
+  Future<void> _onSubmitPressed(
+    BuildContext context,
+    int coloredBoxCount,
+  ) async {
+    final confirmed = await SubmitConfirmationDialog.show(
+      context,
+      coloredBoxCount: coloredBoxCount,
+    );
     if (confirmed && context.mounted) {
       context.read<MatrixGridBloc>().add(const MatrixGridEvent.submitted());
     }
@@ -111,7 +117,10 @@ class _HomeView extends StatelessWidget {
                         isLoading: submitStatus == SubmitStatus.inFlight,
                         onPressed: committedColors.isEmpty
                             ? null
-                            : () => _onSubmitPressed(context),
+                            : () => _onSubmitPressed(
+                                context,
+                                committedColors.length,
+                              ),
                       ),
                     ],
                   ),

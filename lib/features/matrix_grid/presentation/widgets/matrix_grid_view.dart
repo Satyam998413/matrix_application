@@ -6,8 +6,12 @@ import 'package:matrix_application/features/matrix_grid/presentation/widgets/mat
 /// (read-only — pass no [onCellTap] and an empty [currentSelectionLabels]).
 ///
 /// Cells never shrink below [minCellSize] — a large matrixNumber on a small
-/// phone gets a pannable grid (via [InteractiveViewer]) instead of boxes too
-/// small to tap with a fingertip.
+/// phone gets a pannable grid instead of boxes too small to tap with a
+/// fingertip. Always wrapped in [InteractiveViewer] (both axes) rather than
+/// only when the fitted size drops below the minimum — a "fits exactly"
+/// computation can be a fraction of a pixel off in practice, and without a
+/// scroll fallback that clips the last row/column instead of just panning
+/// past it.
 class MatrixGridView extends StatelessWidget {
   const MatrixGridView({
     super.key,
@@ -64,17 +68,11 @@ class MatrixGridView extends StatelessWidget {
           ),
         );
 
-        // Grid fits comfortably at or above the minimum cell size — render
-        // it directly, filling the available square exactly.
-        if (fittedCellSize >= minCellSize) return grid;
-
-        // Boxes would otherwise shrink below a fingertip-sized tap target —
-        // keep them at minCellSize and let the user pan around instead.
         return InteractiveViewer(
           constrained: false,
           minScale: 1,
           maxScale: 1,
-          boundaryMargin: const EdgeInsets.all(16),
+          boundaryMargin: const EdgeInsets.all(24),
           child: grid,
         );
       },
